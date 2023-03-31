@@ -135,13 +135,12 @@ async function runCommand(command: string): Promise<boolean> {
   });
   if (confirm) {
     try {
-      const stdout = execSync(command, {
+      execSync(command, {
         encoding: 'utf-8',
         shell: shellPath,
+        stdio: 'inherit',
       });
-      console.log(stdout);
     } catch (err) {
-      // ignore error since stderr by default will be output to the parent process' stderr
       process.exit(1);
     }
   }
