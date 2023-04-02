@@ -2,6 +2,7 @@
 import chalk from 'chalk';
 import { cli } from 'cleye';
 
+import { ENABLED_DEBUG_MODE } from './utils/common.js';
 import {
   ChoiceResult,
   getChoiceOfList,
@@ -30,6 +31,10 @@ function parseArgs() {
         alias: 'p',
         description: 'Proxy url. e.g. http://localhost:8080',
       },
+      debug: {
+        type: Boolean,
+        description: 'Enable debug mode',
+      },
     },
   });
   if (Object.keys(argv.unknownFlags).length > 0) {
@@ -41,7 +46,10 @@ function parseArgs() {
     process.exit(1);
   }
   if (argv.flags.proxy) {
-    process.env.zCliProxy = argv.flags.proxy;
+    process.env.ZCLI_PROXY = argv.flags.proxy;
+  }
+  if (argv.flags.debug) {
+    process.env.ZCLI_DEBUG_MODE = ENABLED_DEBUG_MODE;
   }
   return argv._.query;
 }

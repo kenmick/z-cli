@@ -1,9 +1,11 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig } from 'axios';
 import chalk from 'chalk';
 import httpsProxyAgent from 'https-proxy-agent';
 import { Configuration, OpenAIApi } from 'openai';
 import ora from 'ora';
 
+import { ASK_GPT } from './common.js';
+import { isDebugMode, logger } from './log-util.js';
 import { getOsAndShell } from './os-util.js';
 
 interface Message {
@@ -36,10 +38,10 @@ export async function askGPT(question: string) {
   const spinner = ora('Hold on, asking GPT-3.5...').start();
   try {
     let options: AxiosRequestConfig = {};
-    if (process.env.zCliProxy) {
+    if (process.env.ZCLI_PROXY) {
       options = {
         proxy: false,
-        httpsAgent: httpsProxyAgent(process.env.zCliProxy),
+        httpsAgent: httpsProxyAgent(process.env.ZCLI_PROXY),
       };
     }
     const completion = await openai.createChatCompletion(
@@ -50,11 +52,29 @@ export async function askGPT(question: string) {
       },
       options
     );
-    messages.push(completion.data.choices[0].message as Message);
     spinner.stop();
+    if (isDebugMode()) {
+      logger.info(
+        ASK_GPT,
+        'Received response from openai API: statusCode=%i, request=%j, response=%j',
+        completion.status,
+        completion.config.data,
+        completion.data
+      );
+    }
+    messages.push(completion.data.choices[0].message as Message);
     return completion.data.choices[0].message?.content;
   } catch (error) {
     spinner.stop();
+    if (isDebugMode()) {
+      const axiosError = error as AxiosError;
+      logger.error(
+        ASK_GPT,
+        'Failed to request openai API: statusCode=%i, response=%j',
+        axiosError.response?.status,
+        axiosError.response?.data
+      );
+    }
     console.log(`😟 ${chalk.red(`Sorry, failed to connect to openai.`)}`);
     process.exit(1);
   }

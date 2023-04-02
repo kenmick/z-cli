@@ -2,7 +2,9 @@ import chalk from 'chalk';
 import { execSync } from 'child_process';
 import inquirer from 'inquirer';
 
+import { EXECUTE_COMMAND } from './common.js';
 import { askGPT } from './gpt-util.js';
+import { clearScreen, isDebugMode, logger } from './log-util.js';
 import { getOsAndShell } from './os-util.js';
 
 export interface ChoiceResult {
@@ -23,7 +25,7 @@ export async function getResultOfQuery(
   query?: string
 ): Promise<QueryResult> {
   if (isRevision) {
-    console.clear();
+    clearScreen();
     query = (
       await inquirer.prompt({
         type: 'input',
@@ -59,7 +61,7 @@ export async function getChoiceOfList(
   command: string,
   error?: string
 ): Promise<ChoiceResult> {
-  console.clear();
+  clearScreen();
   let confirm = true;
   const { choice } = await inquirer.prompt({
     type: 'list',
@@ -100,7 +102,7 @@ export async function getChoiceOfList(
   } else if (choice === 'edit') {
     command = await editCommand(command);
   } else if (choice === 'cancel') {
-    console.clear();
+    clearScreen();
     process.exit(0);
   }
   // re-enter select mode if the user chooses to revise query, edit command, or run command but cancel it
@@ -110,7 +112,7 @@ export async function getChoiceOfList(
 }
 
 async function editCommand(command: string) {
-  console.clear();
+  clearScreen();
   const { edit } = await inquirer.prompt({
     type: 'editor',
     name: 'edit',
@@ -124,7 +126,7 @@ async function editCommand(command: string) {
 }
 
 async function runCommand(command: string): Promise<boolean> {
-  console.clear();
+  clearScreen();
   const { confirm } = await inquirer.prompt({
     type: 'confirm',
     name: 'confirm',
@@ -135,12 +137,28 @@ async function runCommand(command: string): Promise<boolean> {
   });
   if (confirm) {
     try {
+      if (isDebugMode()) {
+        logger.info(
+          EXECUTE_COMMAND,
+          `Executing command "%s" in [%s]`,
+          command,
+          shellPath
+        );
+      }
       execSync(command, {
         encoding: 'utf-8',
         shell: shellPath,
         stdio: 'inherit',
       });
     } catch (err) {
+      if (isDebugMode()) {
+        logger.error(
+          EXECUTE_COMMAND,
+          'Failed to execute command: %s',
+          command,
+          (err as Error).message
+        );
+      }
       process.exit(1);
     }
   }
