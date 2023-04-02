@@ -40,7 +40,9 @@ function parseArgs() {
     );
     process.exit(1);
   }
-  process.env.proxy = argv.flags.proxy;
+  if (argv.flags.proxy) {
+    process.env.zCliProxy = argv.flags.proxy;
+  }
   return argv._.query;
 }
 

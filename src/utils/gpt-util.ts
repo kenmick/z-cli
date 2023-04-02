@@ -35,11 +35,12 @@ export async function askGPT(question: string) {
   });
   const spinner = ora('Hold on, asking GPT-3.5...').start();
   try {
-    let options: AxiosRequestConfig = {
-      proxy: false,
-    };
-    if (process.env.proxy) {
-      options.httpsAgent = httpsProxyAgent(process.env.proxy);
+    let options: AxiosRequestConfig = {};
+    if (process.env.zCliProxy) {
+      options = {
+        proxy: false,
+        httpsAgent: httpsProxyAgent(process.env.zCliProxy),
+      };
     }
     const completion = await openai.createChatCompletion(
       {
