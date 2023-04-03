@@ -3,11 +3,7 @@ import chalk from 'chalk';
 import { cli } from 'cleye';
 
 import { ENABLED_DEBUG_MODE } from './utils/common.js';
-import {
-  ChoiceResult,
-  getChoiceOfList,
-  getResultOfQuery,
-} from './utils/inquirer-util.js';
+import { getChoiceOfList, getResultOfQuery } from './utils/prompt-util.js';
 
 function checkConfig() {
   if (!process.env.OPENAI_API_KEY) {
@@ -57,15 +53,8 @@ function parseArgs() {
 async function run() {
   checkConfig();
   const query = parseArgs();
-  let command = (await getResultOfQuery(false, query)).command;
-  let error;
-  let reSelect = true;
-  while (reSelect) {
-    let result: ChoiceResult = await getChoiceOfList(command as string, error);
-    command = result.command;
-    reSelect = result.reSelect;
-    error = result.error;
-  }
+  await getResultOfQuery(false, query);
+  await getChoiceOfList();
 }
 
 run();

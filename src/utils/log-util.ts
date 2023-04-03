@@ -17,13 +17,3 @@ Object.defineProperty(log, 'heading', {
 log.headingStyle = { fg: 'grey', bg: '' };
 
 export const logger = log;
-
-export function isDebugMode() {
-  return process.env.ZCLI_DEBUG_MODE === ENABLED_DEBUG_MODE;
-}
-
-export function clearScreen() {
-  if (!isDebugMode()) {
-    console.clear();
-  }
-}

@@ -1,19 +1,25 @@
+import { spinner } from '@clack/prompts';
 import { AxiosError, AxiosRequestConfig } from 'axios';
 import chalk from 'chalk';
 import httpsProxyAgent from 'https-proxy-agent';
 import { Configuration, OpenAIApi } from 'openai';
-import ora from 'ora';
 
-import { ASK_GPT } from './common.js';
-import { isDebugMode, logger } from './log-util.js';
+import {
+  ASK_GPT,
+  isDebugMode,
+  printQueryAndCommand,
+  promptData,
+} from './common.js';
+import { logger } from './log-util.js';
 import { getOsAndShell } from './os-util.js';
 
-interface Message {
+export interface Message {
   role: 'system' | 'user' | 'assistant';
   content: string;
 }
 
 const { osType, shellName } = getOsAndShell();
+const { queryHistory } = promptData;
 
 const messages: Message[] = [
   {
@@ -26,16 +32,20 @@ const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
 const openai = new OpenAIApi(configuration);
+const s = spinner();
 
-export async function askGPT(question: string) {
+export async function askGPT(query: string) {
+  queryHistory.push(query);
+  printQueryAndCommand();
   messages.push({
     role: 'user',
     content:
       messages.length === 1
-        ? question
-        : `Add one more requirement: ${question}. Please revise previous command.`,
+        ? query
+        : `Add one more requirement: ${query}. Please revise previous command.`,
   });
-  const spinner = ora('Hold on, asking GPT-3.5...').start();
+
+  s.start('Hold on, asking GPT-3.5...');
   try {
     let options: AxiosRequestConfig = {};
     if (process.env.ZCLI_PROXY) {
@@ -52,7 +62,7 @@ export async function askGPT(question: string) {
       },
       options
     );
-    spinner.stop();
+    s.stop();
     if (isDebugMode()) {
       logger.info(
         ASK_GPT,
@@ -65,7 +75,7 @@ export async function askGPT(question: string) {
     messages.push(completion.data.choices[0].message as Message);
     return completion.data.choices[0].message?.content;
   } catch (error) {
-    spinner.stop();
+    s.stop();
     if (isDebugMode()) {
       const axiosError = error as AxiosError;
       logger.error(
