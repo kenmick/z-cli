@@ -1,8 +1,9 @@
 import { confirm, isCancel, select, text } from '@clack/prompts';
-import editor from '@inquirer/editor';
 import chalk from 'chalk';
 import { execSync } from 'child_process';
+import { edit } from 'external-editor';
 
+import { askChatGPT } from './chatgpt-util.js';
 import {
   EXECUTE_COMMAND,
   clearScreen,
@@ -10,7 +11,6 @@ import {
   printQueryAndCommand,
   promptData,
 } from './common.js';
-import { askGPT } from './gpt-util.js';
 import { logger } from './log-util.js';
 import { getOsAndShell } from './os-util.js';
 
@@ -23,22 +23,19 @@ export async function getResultOfQuery(
   if (isRevision) {
     clearScreen();
     query = (await text({
-      message: chalk.green(
-        `Please input your revision: ${chalk.yellow(
-          '(Press Enter key directly to quit revision)'
-        )}`
-      ),
+      message: chalk.green('Please input your revision: '),
+      placeholder: 'Press <enter> key directly to quit revision',
     })) as string;
-    if (query === undefined) {
-      await getChoiceOfList();
-      return;
-    }
     if (isCancel(query)) {
       clearScreen();
       process.exit(0);
     }
+    if (query === undefined) {
+      await getChoiceOfList();
+      return;
+    }
   }
-  const answer = await askGPT(query as string);
+  const answer = await askChatGPT(query as string);
   if (!answer || /^(#|Sorry|I'm sorry)/.test(answer)) {
     promptData.error = `Sorry, I don't understand your question.`;
   } else {
@@ -92,15 +89,24 @@ export async function getChoiceOfList(): Promise<void> {
 async function editCommand(): Promise<void> {
   clearScreen();
   const command = promptData.command || '';
-  const edit = await editor({
-    message: `${chalk.green(`Please edit following command: `)}\n${chalk.blue(
-      command
-    )}`,
-    default: command,
+  const answer = await text({
+    message: `${chalk.green(`Please edit command: `)}${chalk.blue(command)}`,
+    placeholder: 'Press the <enter> key to launch your editor',
+    validate: (value) => {
+      if (value !== '') {
+        return 'Please press the <enter> key directly';
+      }
+    },
   });
-  const edited = edit.trim();
-  promptData.error = undefined;
-  promptData.command = edited;
+  if (isCancel(answer)) {
+    clearScreen();
+    process.exit(0);
+  }
+  if (answer === undefined) {
+    const edited = edit(command).trim();
+    promptData.error = undefined;
+    promptData.command = edited;
+  }
 }
 
 async function runCommand(): Promise<boolean> {

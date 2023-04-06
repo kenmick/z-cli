@@ -1,6 +1,6 @@
 # z-cli
 
-z-cli is an interactive GPT-powered command line tool that generates commands using natural language.
+z-cli is an interactive ChatGPT-powered command line tool that generates commands using natural language.
 
 ## 🚀 Features
 

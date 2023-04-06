@@ -5,7 +5,7 @@ import httpsProxyAgent from 'https-proxy-agent';
 import { Configuration, OpenAIApi } from 'openai';
 
 import {
-  ASK_GPT,
+  ASK_ChatGPT,
   isDebugMode,
   printQueryAndCommand,
   promptData,
@@ -13,7 +13,7 @@ import {
 import { logger } from './log-util.js';
 import { getOsAndShell } from './os-util.js';
 
-export interface Message {
+interface Message {
   role: 'system' | 'user' | 'assistant';
   content: string;
 }
@@ -34,7 +34,7 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 const s = spinner();
 
-export async function askGPT(query: string) {
+export async function askChatGPT(query: string) {
   queryHistory.push(query);
   printQueryAndCommand();
   messages.push({
@@ -45,7 +45,7 @@ export async function askGPT(query: string) {
         : `Add one more requirement: ${query}. Please revise previous command.`,
   });
 
-  s.start('Hold on, asking GPT-3.5...');
+  s.start('Hold on, asking ChatGPT...');
   try {
     let options: AxiosRequestConfig = {};
     if (process.env.ZCLI_PROXY) {
@@ -65,7 +65,7 @@ export async function askGPT(query: string) {
     s.stop();
     if (isDebugMode()) {
       logger.info(
-        ASK_GPT,
+        ASK_ChatGPT,
         'Received response from openai API: statusCode=%i, request=%j, response=%j',
         completion.status,
         completion.config.data,
@@ -79,7 +79,7 @@ export async function askGPT(query: string) {
     if (isDebugMode()) {
       const axiosError = error as AxiosError;
       logger.error(
-        ASK_GPT,
+        ASK_ChatGPT,
         'Failed to request openai API: statusCode=%i, response=%j',
         axiosError.response?.status,
         axiosError.response?.data

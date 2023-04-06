@@ -1,4 +1,4 @@
-import { intro, outro } from '@clack/prompts';
+import { intro } from '@clack/prompts';
 import chalk from 'chalk';
 
 export interface PromptData {
@@ -8,7 +8,7 @@ export interface PromptData {
 }
 
 export const EXECUTE_COMMAND = 'executeCommand';
-export const ASK_GPT = 'askGPT';
+export const ASK_ChatGPT = 'askChatGPT';
 export const ENABLED_DEBUG_MODE = 'enabled';
 export const promptData: PromptData = {
   command: undefined,
