@@ -11,8 +11,13 @@ z-cli is an interactive ChatGPT-powered command line tool that generates command
 
 ## 🕹️ Example
 
-![find](https://user-images.githubusercontent.com/10039224/230117592-d363a1cf-d335-49d6-9d47-cf6ddf86b1f9.gif)
-![curl](https://user-images.githubusercontent.com/10039224/230116461-cf902508-df74-4612-a71b-d4b33995f55f.gif)
+- zsh: Find files under specified conditions and display the number of lines for each file
+
+![find](https://user-images.githubusercontent.com/10039224/230420856-51ab0ddc-63ac-40a3-8470-96cb1f9f4af7.gif)
+
+- PowerShell: Request an API and return the response in the specified format
+
+![request_api](https://user-images.githubusercontent.com/10039224/230420901-eb9d188c-8ae0-4618-b98b-dd6c926a08fc.gif)
 
 ## 📦 Installation
 
@@ -67,7 +72,7 @@ Flags:
       --version               Show version
 ```
 
-## 📌 Why the name z-cli?
+## 📌 Why the name "z-cli"?
 
 I named it `z-cli` to in memory of someone named `ZCL` who was a REALLY IMPORTANT person to me. 🌷
 
