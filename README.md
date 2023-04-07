@@ -11,11 +11,11 @@ z-cli is an interactive ChatGPT-powered command line tool that generates command
 
 ## 🕹️ Example
 
-- zsh: Find files under specified conditions and display the number of lines for each file
+- zsh: Find files under specified conditions and display the number of lines for each file.
 
 ![find](https://user-images.githubusercontent.com/10039224/230420856-51ab0ddc-63ac-40a3-8470-96cb1f9f4af7.gif)
 
-- PowerShell: Request an API and return the response in the specified format
+- PowerShell: Request an API and return the response in the specified format.
 
 ![request_api](https://user-images.githubusercontent.com/10039224/230420901-eb9d188c-8ae0-4618-b98b-dd6c926a08fc.gif)
 
@@ -59,7 +59,7 @@ ls *.js
 
 You can discover more usage by running `z-cli --help`.
 
-```
+```bash
 z-cli v0.2.0
 
 Usage:
