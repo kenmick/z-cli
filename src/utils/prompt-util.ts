@@ -1,10 +1,12 @@
 import { confirm, isCancel, select, text } from '@clack/prompts';
 import chalk from 'chalk';
 import { execSync } from 'child_process';
+import clipboard from 'clipboardy';
 import { edit } from 'external-editor';
 
 import { askChatGPT } from './chatgpt-util.js';
 import {
+  COPY_COMMAND,
   EXECUTE_COMMAND,
   clearScreen,
   isDebugMode,
@@ -57,6 +59,7 @@ export async function getChoiceOfList(): Promise<void> {
       message: chalk.green('Please choose an option: '),
       options: [
         { value: 'run', label: '✅ Run command' },
+        { value: 'copy', label: '📋 Copy command' },
         { value: 'revise', label: '🧭 Revise query' },
         { value: 'edit', label: '📝 Edit command' },
         { value: 'cancel', label: '❌ Cancel' },
@@ -70,6 +73,8 @@ export async function getChoiceOfList(): Promise<void> {
 
     if (choice === 'run') {
       confirm = await runCommand();
+    } else if (choice === 'copy') {
+      copyCommand();
     } else if (choice === 'revise') {
       await getResultOfQuery(true);
     } else if (choice === 'edit') {
@@ -80,6 +85,7 @@ export async function getChoiceOfList(): Promise<void> {
     }
     // re-enter select mode if the user chooses to revise query, edit command, or run command but cancel it
     reSelect =
+      choice === 'copy' ||
       choice === 'revise' ||
       choice === 'edit' ||
       (choice === 'run' && !confirm);
@@ -107,6 +113,17 @@ async function editCommand(): Promise<void> {
     promptData.error = undefined;
     promptData.command = edited;
   }
+}
+
+function copyCommand() {
+  clearScreen();
+  if (promptData.command) {
+    clipboard.writeSync(promptData.command);
+    if (isDebugMode()) {
+      logger.info(COPY_COMMAND, `Copied "%s" to clipboard`, promptData.command);
+    }
+  }
+  process.exit(0);
 }
 
 async function runCommand(): Promise<boolean> {

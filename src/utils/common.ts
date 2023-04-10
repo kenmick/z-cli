@@ -8,6 +8,7 @@ export interface PromptData {
 }
 
 export const EXECUTE_COMMAND = 'executeCommand';
+export const COPY_COMMAND = 'copyCommand';
 export const ASK_ChatGPT = 'askChatGPT';
 export const ENABLED_DEBUG_MODE = 'enabled';
 export const promptData: PromptData = {
