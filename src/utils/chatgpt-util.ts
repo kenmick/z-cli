@@ -1,9 +1,12 @@
+import { createHash } from 'node:crypto';
+
 import { spinner } from '@clack/prompts';
 import { AxiosError, AxiosRequestConfig } from 'axios';
 import chalk from 'chalk';
 import httpsProxyAgent from 'https-proxy-agent';
 import { Configuration, OpenAIApi } from 'openai';
 
+import { cache } from '../store/cache.js';
 import {
   ASK_ChatGPT,
   isDebugMode,
@@ -45,7 +48,10 @@ export async function askChatGPT(query: string) {
         : `Add one more requirement: ${query}. Please revise previous command.`,
   });
 
-  s.start('Hold on, asking ChatGPT...');
+  // md5 a string
+  const cacheKey = md5(JSON.stringify(messages));
+
+  if (cache.get()) s.start('Hold on, asking ChatGPT...');
   try {
     let options: AxiosRequestConfig = {};
     if (process.env.ZCLI_PROXY) {
