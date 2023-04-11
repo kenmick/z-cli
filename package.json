@@ -1,6 +1,6 @@
 {
   "name": "@kenmick/z-cli",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "An interactive GPT-powered command line tool that generates commands using natural language.",
   "main": "dist/index.js",
   "bin": {

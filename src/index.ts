@@ -19,7 +19,7 @@ function checkConfig() {
 function parseArgs() {
   const argv = cli({
     name: 'z-cli',
-    version: '0.2.0',
+    version: '0.2.1',
     parameters: ['<query>'],
     flags: {
       proxy: {
