@@ -85,7 +85,7 @@ export async function askChatGPT(query: string) {
         axiosError.response?.data
       );
     }
-    console.log(`😟 ${chalk.red(`Sorry, failed to connect to openai.`)}`);
+    console.log(`😟 ${chalk.red('Sorry, failed to connect to openai.')}`);
     process.exit(1);
   }
 }

@@ -8,9 +8,11 @@
   },
   "scripts": {
     "format": "prettier \"src/**/*.{ts,js}\" --write",
+    "lint": "eslint --ext .ts src/",
+    "lint:fix": "eslint --ext .ts src/ --fix",
     "build": "tsc",
     "start": "tsc && node dist/index.js",
-    "prepublishOnly": "pnpm format && pnpm build"
+    "prepublishOnly": " pnpm lint:fix && pnpm format && pnpm build"
   },
   "keywords": [
     "openai",
@@ -40,7 +42,12 @@
     "@types/mute-stream": "^0.0.1",
     "@types/node": "^18.15.11",
     "@types/npmlog": "^4.1.4",
+    "@typescript-eslint/eslint-plugin": "^5.58.0",
+    "@typescript-eslint/parser": "^5.58.0",
     "axios": "^0.26.0",
+    "eslint": "^8.38.0",
+    "eslint-import-resolver-typescript": "^3.5.5",
+    "eslint-plugin-import": "^2.27.5",
     "prettier": "^2.8.7",
     "typescript": "^5.0.2"
   }

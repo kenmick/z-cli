@@ -1,7 +1,5 @@
 import log from 'npmlog';
 
-import { ENABLED_DEBUG_MODE } from './common.js';
-
 log.style = {
   info: { fg: 'green', bg: '', bold: true },
   error: { fg: 'red', bg: '', bold: true },
