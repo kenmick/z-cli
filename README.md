@@ -8,6 +8,7 @@ z-cli is an interactive ChatGPT-powered command line tool that generates command
 - **Runtime detection**: Detects the user's shell (e.g. PowerShell, zsh, bash, etc.) and OS (e.g. Windows, Linux, and Mac) to ensure more accurate command generation.
 - **Context awareness**: Allows the user to input follow-up queries to specify additional requirements.
 - **Command editing**: Allows the user to manually refine the generated command before executing it.
+- **Command copy**: Allows the user to copy the generated command to the clipboard.
 
 ## 🕹️ Example
 
